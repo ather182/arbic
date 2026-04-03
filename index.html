@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أرشيف لغتي | الثالثة إعدادي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c29b3b;
+  --gold-light: #f2d472;
+  --gold-dark: #9a7a2a;
+  --bg: #faf8f3;
+  --card: #ffffff;
+  --text: #1e1c18;
+  --muted: #888070;
+  --border: #ede9df;
+  --red: #c0392b;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════
+   BACKGROUND TEXTURE
+══════════════════════════ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(194,155,59,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 85% 85%, rgba(194,155,59,0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ══════════════════════════
+   GUARD SCREEN
+══════════════════════════ */
+#guardScreen {
+  position: fixed;
+  inset: 0;
+  background: #151310;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#guardScreen.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.guard-inner {
+  background: #1e1b15;
+  border: 1px solid rgba(194,155,59,0.3);
+  border-radius: 24px;
+  padding: 50px 35px;
+  width: 90%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(194,155,59,0.1);
+  position: relative;
+  overflow: hidden;
+}
+.guard-inner::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%; transform: translateX(-50%);
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(194,155,59,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.guard-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  display: block;
+  filter: drop-shadow(0 0 20px rgba(194,155,59,0.4));
+}
+.guard-title {
+  font-family: 'Amiri', serif;
+  font-size: 1.9rem;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.guard-sub {
+  color: #777;
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+}
+
+.guard-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1.5px solid rgba(194,155,59,0.25);
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 1.8rem;
+  text-align: center;
+  letter-spacing: 8px;
+  color: #fff;
+  outline: none;
+  font-family: 'Tajawal', sans-serif;
+  transition: border-color 0.3s;
+  margin-bottom: 14px;
+}
+.guard-input:focus { border-color: var(--gold); }
+.guard-input::placeholder { color: #444; letter-spacing: 3px; font-size: 1rem; }
+
+.guard-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  transition: transform 0.15s, box-shadow 0.3s;
+  box-shadow: 0 8px 25px rgba(194,155,59,0.35);
+}
+.guard-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(194,155,59,0.45); }
+.guard-btn:active { transform: translateY(0); }
+
+.guard-error {
+  color: #e74c3c;
+  font-size: 0.88rem;
+  margin-top: 12px;
+  font-weight: 600;
+  min-height: 20px;
+}
+
+/* ══════════════════════════
+   MAIN CONTENT
+══════════════════════════ */
+#mainContent {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+  position: relative;
+  z-index: 1;
+}
+#mainContent.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ══════════════════════════
+   HEADER
+══════════════════════════ */
+.site-header {
+  text-align: center;
+  padding: 60px 20px 40px;
+  position: relative;
+}
+
+.header-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  color: var(--gold);
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+.header-ornament::before,
+.header-ornament::after {
+  content: '';
+  flex: 1;
+  max-width: 100px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold));
+}
+.header-ornament::before { background: linear-gradient(to left, transparent, var(--gold)); }
+
+.site-title {
+  font-family: 'Amiri', serif;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.site-title span { color: var(--gold); }
+
+.site-subtitle {
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 40px;
+}
+
+/* ══════════════════════════
+   TABS
+══════════════════════════ */
+.tabs-wrap {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.tab-btn {
+  background: white;
+  border: 2px solid var(--border);
+  color: var(--muted);
+  padding: 11px 28px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  transition: all 0.25s;
+}
+.tab-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white;
+  box-shadow: 0 6px 20px rgba(194,155,59,0.3);
+}
+.tab-btn:not(.active):hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ══════════════════════════
+   FILTER BAR
+══════════════════════════ */
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 0 20px 35px;
+}
+
+.filter-btn {
+  background: white;
+  border: 1.5px solid var(--border);
+  padding: 9px 22px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  transition: all 0.2s;
+  color: var(--text);
+}
+.filter-btn.active {
+  background: var(--text);
+  border-color: var(--text);
+  color: white;
+}
+.filter-btn:not(.active):hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ══════════════════════════
+   GRID
+══════════════════════════ */
+.container { max-width: 1300px; margin: 0 auto; padding: 0 20px 80px; }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+/* ══════════════════════════
+   LESSON CARD
+══════════════════════════ */
+.lesson-card {
+  background: var(--card);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+  cursor: pointer;
+  animation: fadeUp 0.5s ease both;
+}
+.lesson-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold-light);
+  box-shadow: 0 20px 50px rgba(194,155,59,0.12);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-img-wrap {
+  width: 100%;
+  height: 380px;
+  overflow: hidden;
+  background: #f5f2eb;
+  position: relative;
+}
+.card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+}
+.lesson-card:hover .card-img-wrap img { transform: scale(1.03); }
+
+.card-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(194,155,59,0.9);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+}
+
+.card-body {
+  padding: 18px 20px 22px;
+  text-align: center;
+}
+.card-category {
+  font-size: 0.75rem;
+  color: var(--gold);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+.card-title {
+  font-family: 'Amiri', serif;
+  font-size: 1.45rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* ══════════════════════════
+   PDF CARD
+══════════════════════════ */
+.pdf-card {
+  background: var(--card);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+  animation: fadeUp 0.5s ease both;
+  display: flex;
+  flex-direction: column;
+}
+.pdf-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold-light);
+  box-shadow: 0 20px 50px rgba(194,155,59,0.12);
+}
+
+.pdf-thumb-wrap {
+  width: 100%;
+  height: 380px;
+  background: linear-gradient(145deg, #f5f2eb, #ede8dc);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.pdf-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.pdf-card:hover .pdf-thumb-wrap img { transform: scale(1.03); }
+
+.pdf-no-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+}
+.pdf-no-thumb .pdf-icon { font-size: 5rem; }
+.pdf-no-thumb p { font-size: 0.85rem; color: #aaa; }
+
+.pdf-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--red);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 20px;
+  letter-spacing: 1.5px;
+}
+
+.pdf-body {
+  padding: 18px 20px 22px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pdf-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-view {
+  background: var(--gold);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s;
+}
+.btn-view:hover { background: var(--gold-dark); transform: translateY(-1px); }
+
+.btn-dl {
+  background: #f0ece1;
+  color: var(--text);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: 'Tajawal', sans-serif;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s;
+}
+.btn-dl:hover { background: #e5dfd0; transform: translateY(-1px); }
+
+/* ══════════════════════════
+   LIGHTBOX
+══════════════════════════ */
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 8000;
+  cursor: zoom-out;
+  padding: 20px;
+}
+#lightbox.open { display: flex; }
+#lightboxImg {
+  max-width: 92%;
+  max-height: 92vh;
+  border-radius: 12px;
+  border: 2px solid rgba(194,155,59,0.4);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  object-fit: contain;
+}
+.lb-close {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  backdrop-filter: blur(4px);
+}
+.lb-close:hover { background: rgba(255,255,255,0.2); }
+
+/* ══════════════════════════
+   PDF VIEWER MODAL
+══════════════════════════ */
+#pdfModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 8000;
+  padding: 15px;
+}
+#pdfModal.open { display: flex; }
+
+.pdf-modal-inner {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 880px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+
+.pdf-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pdf-modal-title {
+  font-family: 'Amiri', serif;
+  font-size: 1.3rem;
+  color: var(--text);
+}
+.pdf-modal-actions { display: flex; gap: 8px; }
+
+#pdfFrame {
+  flex: 1;
+  border: none;
+  width: 100%;
+}
+
+.btn-close-modal {
+  background: #f0ece1;
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.btn-close-modal:hover { background: #e2dbc8; }
+
+/* ══════════════════════════
+   EMPTY STATE
+══════════════════════════ */
+.empty {
+  text-align: center;
+  padding: 70px 20px;
+  color: #bbb;
+  grid-column: 1/-1;
+}
+.empty span { font-size: 3rem; display: block; margin-bottom: 10px; }
+
+/* ══════════════════════════
+   FOOTER
+══════════════════════════ */
+.site-footer {
+  text-align: center;
+  padding: 30px 20px;
+  color: #bbb;
+  font-size: 0.82rem;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+/* ══════════════════════════
+   RESPONSIVE
+══════════════════════════ */
+@media (max-width: 600px) {
+  .site-title { font-size: 2.2rem; }
+  .cards-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-img-wrap, .pdf-thumb-wrap { height: 220px; }
+  .card-title { font-size: 1.1rem; }
+  .tab-btn { padding: 10px 20px; font-size: 0.92rem; }
+}
+@media (max-width: 380px) {
+  .cards-grid { grid-template-columns: 1fr; }
+}
+
+/* stagger animation delay */
+.lesson-card:nth-child(1), .pdf-card:nth-child(1) { animation-delay: 0.05s; }
+.lesson-card:nth-child(2), .pdf-card:nth-child(2) { animation-delay: 0.1s; }
+.lesson-card:nth-child(3), .pdf-card:nth-child(3) { animation-delay: 0.15s; }
+.lesson-card:nth-child(4), .pdf-card:nth-child(4) { animation-delay: 0.2s; }
+.lesson-card:nth-child(5), .pdf-card:nth-child(5) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<!-- ══════ GUARD ══════ -->
+<div id="guardScreen">
+  <div class="guard-inner">
+    <span class="guard-icon">📖</span>
+    <h1 class="guard-title">أرشيف لغتي</h1>
+    <p class="guard-sub">أدخل رمز الدخول لمشاهدة المحتوى</p>
+    <input
+      type="password"
+      class="guard-input"
+      id="guardInput"
+      placeholder="••••"
+      maxlength="10"
+      onkeydown="if(event.key==='Enter') unlock()"
+      autofocus
+    >
+    <button class="guard-btn" onclick="unlock()">دخول الآن</button>
+    <p class="guard-error" id="guardError"></p>
+  </div>
+</div>
+
+<!-- ══════ MAIN ══════ -->
+<div id="mainContent">
+
+  <header class="site-header">
+    <div class="header-ornament">✦</div>
+    <h1 class="site-title">أرشيف <span>لغتي</span></h1>
+    <p class="site-subtitle">دروس السنة الثالثة إعدادي — الدورة الثانية</p>
+
+    <!-- TABS -->
+    <div class="tabs-wrap">
+      <button class="tab-btn active" onclick="switchTab('lessons', this)">📚 الدروس</button>
+      <button class="tab-btn" onclick="switchTab('pdfs', this)">📄 ملفات PDF</button>
+    </div>
+
+    <!-- FILTER - Lessons -->
+    <div class="filter-bar" id="filterBarLessons">
+      <button class="filter-btn active" onclick="filterLessons('all', this)">الكل</button>
+      <button class="filter-btn" onclick="filterLessons('خطاطة', this)">خطاطات</button>
+      <button class="filter-btn" onclick="filterLessons('تطبيق', this)">تطبيقات لغوية</button>
+    </div>
+
+    <!-- FILTER - PDFs -->
+    <div class="filter-bar" id="filterBarPdfs" style="display:none;">
+      <button class="filter-btn active" onclick="filterPdfs('all', this)">الكل</button>
+      <button class="filter-btn" onclick="filterPdfs('خطاطة', this)">خطاطات</button>
+      <button class="filter-btn" onclick="filterPdfs('تطبيق', this)">تطبيقات لغوية</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- LESSONS GRID -->
+    <div id="lessonsSection">
+      <div class="cards-grid" id="lessonsGrid"></div>
+    </div>
+
+    <!-- PDFs GRID -->
+    <div id="pdfsSection" style="display:none;">
+      <div class="cards-grid" id="pdfsGrid"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    أرشيف لغتي &mdash; الثالثة إعدادي ✦ جميع الحقوق محفوظة
+  </footer>
+</div>
+
+<!-- ══════ LIGHTBOX ══════ -->
+<div id="lightbox" onclick="closeLB()">
+  <button class="lb-close" onclick="closeLB()">✕</button>
+  <img id="lightboxImg" src="" alt="" onclick="event.stopPropagation()">
+</div>
+
+<!-- ══════ PDF MODAL ══════ -->
+<div id="pdfModal">
+  <div class="pdf-modal-inner" onclick="event.stopPropagation()">
+    <div class="pdf-modal-header">
+      <h3 class="pdf-modal-title" id="pdfModalTitle"></h3>
+      <div class="pdf-modal-actions">
+        <a id="pdfDlBtn" href="" download class="btn-view" style="text-decoration:none;">⬇️ تحميل</a>
+        <button class="btn-close-modal" onclick="closePdfModal()">✕</button>
+      </div>
+    </div>
+    <iframe id="pdfFrame" src=""></iframe>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════
+// DATA — الدروس والملفات
+// ══════════════════════════
+
+const PASS = "1234"; // رمز الدخول — بدلو كيفما بغيتي
+
+const lessons = [
+  {
+    id: 1,
+    title: "خطاطة اسم التفضيل",
+    category: "خطاطة",
+    image: "image1.jpg"
+  },
+  {
+    id: 2,
+    title: "خطاطة أسلوب التعجب",
+    category: "خطاطة",
+    image: "image2.jpg"
+  },
+  {
+    id: 3,
+    title: "خطاطة الممنوع من الصرف",
+    category: "خطاطة",
+    image: "image3.jpg"
+  },
+  {
+    id: 4,
+    title: "تطبيقات اسم التفضيل وأسلوب التعجب",
+    category: "تطبيق",
+    image: "image4.jpg"
+  },
+  {
+    id: 5,
+    title: "تطبيقات الإضافة والممنوع من الصرف",
+    category: "تطبيق",
+    image: "image5.jpg"
+  }
+];
+
+const pdfs = [
+  {
+    id: 1,
+    title: "خطاطة اسم التفضيل",
+    category: "خطاطة",
+    file: "خطاطة اسم التفضيل (1).pdf",
+    thumb: "image1.jpg"
+  },
+  {
+    id: 2,
+    title: "خطاطة أسلوب التعجب",
+    category: "خطاطة",
+    file: "خطاطة أسلوب التعجب.pdf",
+    thumb: "image2.jpg"
+  },
+  {
+    id: 3,
+    title: "خطاطة الممنوع من الصرف",
+    category: "خطاطة",
+    file: "خطاطة الممنوع من الصرف.pdf",
+    thumb: "image3.jpg"
+  },
+  {
+    id: 4,
+    title: "تطبيقات اسم التفضيل وأسلوب التعجب",
+    category: "تطبيق",
+    file: "تطبيقات_اسم_التفضيل_وأسلوب_التعجب_1.pdf",
+    thumb: "image4.jpg"
+  },
+  {
+    id: 5,
+    title: "تطبيقات الإضافة والممنوع من الصرف",
+    category: "تطبيق",
+    file: "تطبيقات_الإضافة_والممنوع_من_الصرف.pdf",
+    thumb: "image5.jpg"
+  }
+];
+
+// ══════════════════════════
+// STATE
+// ══════════════════════════
+let currentTab = 'lessons';
+let lessonFilter = 'all';
+let pdfFilter = 'all';
+
+// ══════════════════════════
+// GUARD
+// ══════════════════════════
+function unlock() {
+  const val = document.getElementById('guardInput').value.trim();
+  if (val === PASS) {
+    document.getElementById('guardScreen').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('guardScreen').style.display = 'none';
+    }, 650);
+    document.getElementById('mainContent').classList.add('show');
+    renderLessons();
+    renderPdfs();
+  } else {
+    const err = document.getElementById('guardError');
+    err.textContent = '❌ الرمز غير صحيح، حاول مجدداً';
+    document.getElementById('guardInput').value = '';
+    document.getElementById('guardInput').style.borderColor = '#e74c3c';
+    setTimeout(() => {
+      err.textContent = '';
+      document.getElementById('guardInput').style.borderColor = 'rgba(194,155,59,0.25)';
+    }, 2500);
+  }
+}
+
+// ══════════════════════════
+// TABS
+// ══════════════════════════
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (tab === 'lessons') {
+    document.getElementById('lessonsSection').style.display = 'block';
+    document.getElementById('pdfsSection').style.display = 'none';
+    document.getElementById('filterBarLessons').style.display = 'flex';
+    document.getElementById('filterBarPdfs').style.display = 'none';
+  } else {
+    document.getElementById('lessonsSection').style.display = 'none';
+    document.getElementById('pdfsSection').style.display = 'block';
+    document.getElementById('filterBarLessons').style.display = 'none';
+    document.getElementById('filterBarPdfs').style.display = 'flex';
+  }
+}
+
+// ══════════════════════════
+// FILTERS
+// ══════════════════════════
+function filterLessons(cat, btn) {
+  lessonFilter = cat;
+  document.querySelectorAll('#filterBarLessons .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLessons();
+}
+
+function filterPdfs(cat, btn) {
+  pdfFilter = cat;
+  document.querySelectorAll('#filterBarPdfs .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPdfs();
+}
+
+// ══════════════════════════
+// RENDER LESSONS
+// ══════════════════════════
+function renderLessons() {
+  const grid = document.getElementById('lessonsGrid');
+  const filtered = lessonFilter === 'all'
+    ? lessons
+    : lessons.filter(l => l.category.includes(lessonFilter));
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty"><span>📚</span><p>لا توجد دروس في هذا التصنيف</p></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((l, i) => `
+    <div class="lesson-card" style="animation-delay:${i * 0.07}s" onclick="openImg('${l.image}')">
+      <div class="card-img-wrap">
+        <img
+          src="${l.image}"
+          alt="${l.title}"
+          loading="lazy"
+          onerror="this.parentElement.innerHTML='<div class=\\'pdf-no-thumb\\'><span class=\\'pdf-icon\\'>🖼️</span><p>الصورة غير متوفرة</p></div>'"
+        >
+        <span class="card-tag">${l.category}</span>
+      </div>
+      <div class="card-body">
+        <p class="card-category">${l.category === 'خطاطة' ? 'خطاطة' : 'تطبيق لغوي'}</p>
+        <h3 class="card-title">${l.title}</h3>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════
+// RENDER PDFs
+// ══════════════════════════
+function renderPdfs() {
+  const grid = document.getElementById('pdfsGrid');
+  const filtered = pdfFilter === 'all'
+    ? pdfs
+    : pdfs.filter(p => p.category.includes(pdfFilter));
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty"><span>📄</span><p>لا توجد ملفات في هذا التصنيف</p></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((p, i) => `
+    <div class="pdf-card" style="animation-delay:${i * 0.07}s">
+      <div class="pdf-thumb-wrap">
+        ${p.thumb
+          ? `<img src="${p.thumb}" alt="${p.title}" loading="lazy"
+               onerror="this.parentElement.innerHTML='<div class=\\'pdf-no-thumb\\'><span class=\\'pdf-icon\\'>📄</span><p>${p.title}</p></div>'">`
+          : `<div class="pdf-no-thumb"><span class="pdf-icon">📄</span><p>${p.title}</p></div>`
+        }
+        <span class="pdf-badge">PDF</span>
+      </div>
+      <div class="pdf-body">
+        <p class="card-category">${p.category === 'خطاطة' ? 'خطاطة' : 'تطبيق لغوي'}</p>
+        <h3 class="card-title">${p.title}</h3>
+        <div class="pdf-actions">
+          <button class="btn-view" onclick="openPdf('${encodeURIComponent(p.file)}', '${p.title}', '${p.file}')">👁️ عرض</button>
+          <a href="${p.file}" download class="btn-dl">⬇️ تحميل</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════
+// LIGHTBOX
+// ══════════════════════════
+function openImg(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLB() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ══════════════════════════
+// PDF MODAL
+// ══════════════════════════
+function openPdf(encodedFile, title, rawFile) {
+  document.getElementById('pdfModalTitle').textContent = title;
+  document.getElementById('pdfFrame').src = decodeURIComponent(encodedFile);
+  document.getElementById('pdfDlBtn').href = rawFile;
+  document.getElementById('pdfModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePdfModal() {
+  document.getElementById('pdfModal').classList.remove('open');
+  document.getElementById('pdfFrame').src = '';
+  document.body.style.overflow = '';
+}
+
+// Close on backdrop click
+document.getElementById('pdfModal').addEventListener('click', function(e) {
+  if (e.target === this) closePdfModal();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeLB();
+    closePdfModal();
+  }
+});
+</script>
+</body>
+</html>
